@@ -2,9 +2,11 @@
 package main
 
 import (
-  "html/template"
-  "net/http"
   "fmt"
+  "path"
+  "runtime"
+  "net/http"
+  "html/template"
 )
 
 type ContactDetails struct {
@@ -21,7 +23,11 @@ func main() {
 }
 
 func formHandler(w http.ResponseWriter, r *http.Request) {
-  tmpl := template.Must(template.ParseFiles("views/forms.html"))
+  _, filename, _, ok := runtime.Caller(0)
+  if !ok {
+    fmt.Println("No caller information")
+  }
+  tmpl := template.Must(template.ParseFiles(path.Dir(filename)+"/views/forms.html"))
   if r.Method != http.MethodPost {
     tmpl.Execute(w, nil)
     return
